@@ -121,10 +121,10 @@ def build_feature_vocab(n, song_names, songs, feature_func):
 			else:
 				rates.append(0.0)
 		dtm.append(rates)
-	dtm = np.array(dtm)
-			
-	return dtm, vocab, np.array(song_names)
+	#dtm = np.array(dtm)
 	
+	return dtm, vocab, np.array(song_names)
+
 # build an array of values for features that have a single value (not a high dimensional point)
 def build_single_feature(song_names, songs, feature_func):
 	values = []
@@ -132,5 +132,6 @@ def build_single_feature(song_names, songs, feature_func):
 		value = feature_func(doc)
 		values.append([value])
 
-	dtm = np.array(values)
+	#dtm = np.array(values)
+	dtm = values
 	return dtm, np.array(song_names)
