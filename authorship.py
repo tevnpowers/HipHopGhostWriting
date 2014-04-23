@@ -50,7 +50,7 @@ for j in range(len(songs)):
 			dtm, documents = build_single_feature(all_song_names, all_songs, feature_func)
 		else:
 			dtm, vocab, documents = build_feature_vocab(n_list[i], all_song_names, all_songs, feature_func)
-
+			
 		# run KNN
 		neighbors = documents[1:]
 		k = knn_list[i]

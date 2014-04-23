@@ -21,10 +21,10 @@ else:
 	sys.exit()
 
 # which features to extract
-feature_list = [get_words, get_ngrams, get_word_grams, get_song_length, get_avg_word_length, get_line_count, get_avg_line_length]
+feature_list = [get_words, get_ngrams, get_word_grams, get_avg_word_length, get_avg_line_length]
 
 # what n should be (only necessary for character gram and word gram extraction
-n_list = [None, 4, 3, 2, None, None, None, None]
+n_list = [None, 4, 3, None, None,]
 
 def create_classification_points(songs, song_names):
 	song_points = []
@@ -46,8 +46,8 @@ def create_classification_points(songs, song_names):
 	return song_points
 
 song_points = create_classification_points(class1_songs+class2_songs, class1_song_names+class2_song_names)
-class1_song_points = song_points[:7]
-class2_song_points = song_points[7:]
+class1_song_points = song_points[:len(class1_songs)]
+class2_song_points = song_points[len(class1_songs):]
 
 for i in range(len(class2_songs)):
 	point = class2_song_points[i]
