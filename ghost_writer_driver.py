@@ -1,6 +1,7 @@
 from file_parser import *
 from sklearn import svm
 from sklearn.metrics import classification_report, confusion_matrix
+from random import randint
 
 # Command Line: python ghost_writer_driver.py Dr_Dre Dr_Dre_GhostWritten
 
@@ -39,6 +40,7 @@ def create_classification_points(songs, song_names):
 	for song in songs:
 		song_points.append([])
 
+	point_len = 0
 	# loop through each feature function in the given list, adding the feature values to the data point for each song
 	for i in range(len(feature_list)):
 		feature_func = feature_list[i]
@@ -49,10 +51,24 @@ def create_classification_points(songs, song_names):
 		else:
 			dtm, vocab, documents = build_feature_vocab(n_list[i], song_names, songs, feature_func)
 
+		'''
+		if i <= 2:
+			point_len += len(dtm[0])
+			
+		if i == 2:
+		avg_point_len = point_len/3.0
+		'''
+			
 		# add the values for this feature set to the high dimensional point for each song
 		for j in range(len(dtm)):
-			song_points[j] += dtm[j]
+			'''
+			if i > 2:
+				dtm[j] = dtm[j]*int(avg_point_len)
 
+			print(len(dtm[j]))
+			'''
+			song_points[j] += dtm[j]
+			
 	# return the list of data points representative of each point
 	return song_points
 
@@ -65,6 +81,7 @@ song_points = create_classification_points(class1_songs+class2_songs, class1_son
 class1_song_points = song_points[:len(class1_songs)]
 class2_song_points = song_points[len(class1_songs):]
 
+# list for predicted labels to be compared to truth labels
 predictions = []
 true_labels = [0]*len(class1_songs)+[1]*len(class2_songs)
 
@@ -74,31 +91,40 @@ for i in range(len(all_songs)):
 	point = song_points[i]
 	name = all_song_names[i]
 	if i < len(class1_songs):
-		# copy of class 2 points, with the target removed
+		# copy of class 1 points, with the target removed
 		class1_copy = class1_song_points[:]
 		class1_copy.remove(point)
 
-		# training points is the combination of all points minus the target
-		training_points = class1_copy + class2_song_points
+		# randomly omit one song from the second class of songs
+		rand_omission = randint(0, len(class2_songs)-1)
+		class2_copy = class2_song_points[:]
+		class2_copy.remove(class2_copy[rand_omission])
 		
-		# label class 1 songs as 0 and class 2 songs as 1
-		labels = ([0]*len(class1_copy)) + ([1]*len(class2_song_points))
-
+		# training points is the combination of all points minus the target
+		training_points = class1_copy + class2_copy
+		
+		# label class 1 songs as 0 and class 2 songs as 1 for training
+		labels = ([0]*len(class1_copy)) + ([1]*len(class2_copy))
 	else:
 		# copy of class 2 points, with the target removed
 		class2_copy = class2_song_points[:]
 		class2_copy.remove(point)
-
+		
+		# randomly omit one song from the second class of songs
+		rand_omission = randint(0, len(class1_songs)-1)
+		class1_copy = class1_song_points[:]
+		class1_copy.remove(class1_copy[rand_omission])
+		
 		# training points is the combination of all points minus the target
-		training_points = class1_song_points + class2_copy
+		training_points = class1_copy + class2_copy
 	
-		# label class 1 songs as 0 and class 2 songs as 1
-		labels = ([0]*len(class1_song_points)) + ([1]*len(class2_copy))
+		# label class 1 songs as 0 and class 2 songs as 1 for training
+		labels = ([0]*len(class1_copy)) + ([1]*len(class2_copy))
 
 	# Create multiple SVM variations
 	h = 0.02
 	C = 1.0
-	
+
 	svc = svm.SVC(kernel='linear', C=C).fit(training_points, labels)
 	rbf_svc = svm.SVC(kernel='rbf', gamma=0.7, C=C).fit(training_points, labels)
 	poly_svc = svm.SVC(kernel='poly', degree=3, C=C).fit(training_points, labels)
@@ -109,15 +135,18 @@ for i in range(len(all_songs)):
 	rbf_predicted_label = rbf_svc.predict([point])[0]
 	poly_predicted_label = poly_svc.predict([point])[0]
 	lin_predicted_label = lin_svc.predict([point])[0]
-	
+
 	predictions.append(svc_predicted_label)
+	'''
 	print('***'*10)
 	print(svc_predicted_label)
 	print(rbf_predicted_label)
 	print(poly_predicted_label)
 	print(lin_predicted_label)
+	'''
 	predicted_labels = [svc_predicted_label, rbf_predicted_label, poly_predicted_label, lin_predicted_label]
 
+# Final output/results
 print('Predicted Labels: ', predictions)
 print('True Labels: ', true_labels)
 print('Confusion Matrix: ', confusion_matrix(true_labels, predictions))
