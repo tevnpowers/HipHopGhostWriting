@@ -1,0 +1,15 @@
+May 5, 2014
+- Will Smith 1980s vs. Modern Rapper
+- POS tagging: nltk.tag.pos_tag
+- POS tagging, bigrams and/or one grams
+- nltk syllables
+- 1908s rapper vs. Modern Day Dr. Dre
+- quantiles of word length & line length
+- syllable length quantile
+- Quantiles: scipy.stats.mstats.mquantiles(numbers, prob = .2, .5, .8)
+- python rhyme detection?
+- phonemes as opposed to character grams? smoother.
+- character 4 gram density: (unique 4 grams)/(total 4 grams)
+- (unique words)/(total words)
+- extracting features and being able to tell the difference
+- sentiment analysis - Stretch

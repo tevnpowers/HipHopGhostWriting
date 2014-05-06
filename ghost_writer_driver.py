@@ -40,7 +40,6 @@ def create_classification_points(songs, song_names):
 	for song in songs:
 		song_points.append([])
 
-	point_len = 0
 	# loop through each feature function in the given list, adding the feature values to the data point for each song
 	for i in range(len(feature_list)):
 		feature_func = feature_list[i]
@@ -51,22 +50,8 @@ def create_classification_points(songs, song_names):
 		else:
 			dtm, vocab, documents = build_feature_vocab(n_list[i], song_names, songs, feature_func)
 
-		'''
-		if i <= 2:
-			point_len += len(dtm[0])
-			
-		if i == 2:
-		avg_point_len = point_len/3.0
-		'''
-			
 		# add the values for this feature set to the high dimensional point for each song
 		for j in range(len(dtm)):
-			'''
-			if i > 2:
-				dtm[j] = dtm[j]*int(avg_point_len)
-
-			print(len(dtm[j]))
-			'''
 			song_points[j] += dtm[j]
 			
 	# return the list of data points representative of each point
