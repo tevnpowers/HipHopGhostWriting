@@ -3,8 +3,11 @@ import os
 import sys
 import re
 import operator
+import nltk
 import numpy as np
 from knn import find_knn
+
+CHARACTER_N_GRAMS = 4
 
 # loop through the given directory and get all song lyrics and names
 def get_all_songs(directory):
@@ -22,9 +25,9 @@ def parse_lyrics(filename, directory):
 	lyrics = file.read().lower()
 	lyrics = "".join(re.findall("[a-zA-Z0-9 \n]+", lyrics))
 	return lyrics
-	
+
 # create a dictionary of character n grams
-def get_ngrams(song, grams, n):
+def get_character_grams(song, grams, n):
 	for i in range(len(song)):
 		gram = song[i:i+n]
 		if gram not in grams:
@@ -52,6 +55,30 @@ def get_words(song, dict, n):
 			else:
 				dict[word] += 1.0
 
+# create a dictionary of word n grams
+def get_pos(song, grams, n):
+	tokens = nltk.word_tokenize(song)
+	tags = [pos for (word, pos) in nltk.pos_tag(tokens)]
+
+	for i in range(len(tags)):
+		gram = tags[i]
+		if gram not in grams:
+			grams[gram] = 1.0
+		else:
+			grams[gram] += 1.0
+			
+# create a dictionary of word n grams
+def get_pos_grams(song, grams, n):
+	tokens = nltk.word_tokenize(song)
+	tags = [pos for (word, pos) in nltk.pos_tag(tokens)]
+
+	for i in range(len(tags)):
+		gram = tuple(tags[i:i+n])
+		if gram not in grams:
+			grams[gram] = 1.0
+		else:
+			grams[gram] += 1.0
+
 # get the number of characters in the song
 def get_song_length(song):
 	return len(song)
@@ -77,6 +104,28 @@ def get_avg_line_length(song):
 		total_length += len(line)
 	return total_length/len(lines)
 
+def get_word_density(song):
+	words = re.split('\\s+', song)
+	unique = set(words)
+	return len(unique)/len(words)
+	
+def get_pos_density(song):
+	tokens = nltk.word_tokenize(song)
+	all_pos = [pos for (word, pos) in nltk.pos_tag(tokens)]
+	unique_pos = set(all_pos)
+	return len(unique_pos)/len(all_pos)
+	
+# create a dictionary of character n grams
+def get_character_gram_density(song):
+	n = CHARACTER_N_GRAMS
+	grams = []
+	for i in range(len(song)):
+		gram = song[i:i+n]
+		grams.append(gram)
+
+	unique_grams = set(grams)
+	return len(unique_grams)/len(grams)
+
 # sort dictionary based on value
 def sort_ngrams(grams):
 	grams = sorted(grams.items(), key=operator.itemgetter(1), reverse=True)
@@ -84,10 +133,11 @@ def sort_ngrams(grams):
 
 # normalize n grams to rates per 1000
 def normalize_ngrams(grams):
-	total = sum(grams.values())/1000.0
+	total = sum(grams.values())/10000000.0
 	for key in grams:
+		#rint(grams[key]/total, grams[key]/(total/1000.0))
 		grams[key] /= total
-		
+
 # create a vocab dictionary
 def create_vocab(dictionaries):
 	vocab = set()

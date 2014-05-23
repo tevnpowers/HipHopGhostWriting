@@ -26,10 +26,10 @@ else:
 
 # which features to extract from each song
 # word rates, character grams, word grams, avg word length, and avg line length
-feature_list = [get_words, get_ngrams, get_word_grams, get_avg_word_length, get_avg_line_length]
+feature_list = [get_words, get_line_count, get_avg_word_length, get_avg_line_length, get_word_density, get_pos_density, get_character_gram_density]
 
 # what n should be (only necessary for character gram and word gram extraction
-n_list = [None, 3, 2, None, None]
+n_list = [3, 2, 2, None, None, None, None, None, None]
 
 # given a list of lyrics and list of song names, create high-dimensional data points to respresent each point based on the features defined in feature_list
 def create_classification_points(songs, song_names):
@@ -45,7 +45,7 @@ def create_classification_points(songs, song_names):
 		feature_func = feature_list[i]
 
 		# build the representative points for each feature (the dtm holds the feature data for each song)
-		if feature_func in [get_song_length, get_avg_word_length, get_line_count, get_avg_line_length]:
+		if feature_func in [get_song_length, get_avg_word_length, get_line_count, get_avg_line_length, get_word_density, get_pos_density, get_character_gram_density]:
 			dtm, documents = build_single_feature(song_names, songs, feature_func)
 		else:
 			dtm, vocab, documents = build_feature_vocab(n_list[i], song_names, songs, feature_func)
@@ -53,7 +53,7 @@ def create_classification_points(songs, song_names):
 		# add the values for this feature set to the high dimensional point for each song
 		for j in range(len(dtm)):
 			song_points[j] += dtm[j]
-			
+
 	# return the list of data points representative of each point
 	return song_points
 
@@ -67,7 +67,11 @@ class1_song_points = song_points[:len(class1_songs)]
 class2_song_points = song_points[len(class1_songs):]
 
 # list for predicted labels to be compared to truth labels
-predictions = []
+svc_predictions = []
+rbf_predictions = []
+poly_predictions = []
+lin_predictions = []
+
 true_labels = [0]*len(class1_songs)+[1]*len(class2_songs)
 
 # for each song in class 2, use SVM to determine if it best fits in class 1 or class 2 (should be class 2)
@@ -121,18 +125,25 @@ for i in range(len(all_songs)):
 	poly_predicted_label = poly_svc.predict([point])[0]
 	lin_predicted_label = lin_svc.predict([point])[0]
 
-	predictions.append(svc_predicted_label)
-	'''
-	print('***'*10)
-	print(svc_predicted_label)
-	print(rbf_predicted_label)
-	print(poly_predicted_label)
-	print(lin_predicted_label)
-	'''
-	predicted_labels = [svc_predicted_label, rbf_predicted_label, poly_predicted_label, lin_predicted_label]
+	svc_predictions.append(svc_predicted_label)
+	rbf_predictions.append(rbf_predicted_label)
+	poly_predictions.append(poly_predicted_label)
+	lin_predictions.append(lin_predicted_label)
 
-# Final output/results
-print('Predicted Labels: ', predictions)
-print('True Labels: ', true_labels)
-print('Confusion Matrix: ', confusion_matrix(true_labels, predictions))
-print('Classification Matrix: ', classification_report(true_labels, predictions))
+all_predictions = [svc_predictions, rbf_predictions, poly_predictions, lin_predictions]
+for i in range(len(all_predictions)):
+	# Final output/results
+	if i == 0:
+		print('SVC')
+	elif i == 1:
+		print('RBF')
+	elif i == 2:
+		print('Poly')
+	else:
+		print('Lin')
+
+	print('Predicted Labels: ', all_predictions[i])
+	print('True Labels: ', true_labels)
+	print('Confusion Matrix: ', confusion_matrix(true_labels, all_predictions[i]))
+	print('Classification Matrix: ', classification_report(true_labels, all_predictions[i]))
+	sys.exit() #only care about the svc prediction for now
