@@ -7,15 +7,21 @@ import sys
 
 #Features 'Line Count', 'Average Word Length', 'Average Line Length', 'Word Density', 'POS Density', 'Character 4-Gram Density', top words, POS rates
 print('Finding most discriminatory features between Jay-Z and Will Smith...')
-NUM_FEATURES = 5
+NUM_FEATURES = 10
 
 all_song_points = jayz_points + willsmith_points
 true_labels = [0]*len(jayz_points)+[1]*len(willsmith_points)
 
-selector = SelectKBest(chi2, NUM_FEATURES)
-selector.fit(all_song_points, true_labels)
+# since SelectKBest does not return the features in order of most effective to least, i loop through NUM_FEATURES time and find the 1st best feature, 2nd best feature, 3rd, etc. and append to feature_indices so they will be ordered.
+feature_indices = []
+for i in range(NUM_FEATURES):
+	selector = SelectKBest(chi2, i+1)
+	selector.fit(all_song_points, true_labels)
 
-feature_indices = selector.get_support(indices=True)
+	new_indices = selector.get_support(indices=True)
+	for index in new_indices:
+		if index not in feature_indices:
+			feature_indices.append(index)
 
 print('Most discriminatory features are...')
 
