@@ -1,0 +1,11 @@
+anaconda 
+flask
+jinja2
+matplotlib
+nltk
+numpy
+pip
+python
+scikit-learn
+scipy
+werkzeug
