@@ -1,6 +1,6 @@
 flask==0.10.1 
 jinja2==2.7.1
-nltk==3.0a3
+nltk==3.0
 numpy==1.7.1
 scikit-learn==0.14.1  
 scipy==0.13.1
