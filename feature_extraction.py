@@ -5,7 +5,6 @@ import re
 import operator
 import nltk
 import numpy as np
-from knn import find_knn
 from collections import Counter
 
 CHARACTER_N_GRAMS = 4
