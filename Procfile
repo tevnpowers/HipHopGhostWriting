@@ -1,1 +1,1 @@
-web: python comparison.py
+web: gunicorn comparison:app

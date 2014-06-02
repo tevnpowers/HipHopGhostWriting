@@ -1,7 +1,7 @@
-flask==0.10.1 
-jinja2==2.7.1
-nltk==3.0
-numpy==1.7.1
-scikit-learn==0.14.1  
-scipy==0.13.1
-werkzeug==0.9.4
+Flask==0.9
+Jinja2==2.6
+gunicorn==0.17.2
+nltk==2.0.4
+numpy==1.6.1
+scikit-learn==0.14.1
+scipy==0.10.1

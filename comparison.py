@@ -89,7 +89,7 @@ def extract_features():
 
 @app.route('/discriminatory_features')
 def discriminatory_features():
-	print('Finding most discriminatory features...')
+	print 'Finding most discriminatory features...'
 
 	NUM_FEATURES = 10
 
@@ -122,7 +122,7 @@ def discriminatory_features():
 
 @app.route('/algorithm_confidence')
 def algorithm_confidence():
-	print('Computing algorithm confidence...')
+	print 'Computing algorithm confidence...'
 
 	song_points = class1_song_points + class2_song_points
 	true_labels = [0]*len(class1_song_points)+[1]*len(class2_song_points)
@@ -165,12 +165,12 @@ def algorithm_confidence():
 		if svc_predictions[i] == true_labels[i]:
 			correct += 1.0
 
-	print('Confusion Matrix: ', confusion_matrix(true_labels, svc_predictions))
-	print('Classification Matrix: ', classification_report(true_labels, svc_predictions))
+	print 'Confusion Matrix: ', confusion_matrix(true_labels, svc_predictions)
+	print 'Classification Matrix: ', classification_report(true_labels, svc_predictions)
 	
 	accuracy = float(correct*100/len(svc_predictions))
-	print('Percent Accuracy: ' + str(accuracy) + '%')
-	print('Program complete...')
+	print 'Percent Accuracy: ' + str(accuracy) + '%'
+	print 'Program complete...'
 	return jsonify(confidence=str(int(accuracy))+'%')
 
 # Route that will process the AJAX request, sum up two
