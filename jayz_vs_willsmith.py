@@ -69,6 +69,7 @@ for i in range(len(all_song_points)):
 	h = 0.02
 	C = 1.0
 
+	print(len(data_points), len(labels))
 	svc = svm.SVC(kernel='linear', C=C).fit(data_points, labels)
 
 	# Predict the label based off of the SVMs above

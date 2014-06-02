@@ -6,6 +6,7 @@ import operator
 import nltk
 import numpy as np
 from knn import find_knn
+from collections import Counter
 
 CHARACTER_N_GRAMS = 4
 
@@ -46,14 +47,21 @@ def get_word_grams(song, grams, n):
 			grams[gram] += 1.0
 
 # create a dictionary of words
-def get_words(song, dict, n):
+def get_top_words(song, dict, n):
 	words = re.split('\\s+', song)
+	word_counts = Counter(words)
+	top_words = word_counts.most_common(n)
+	for key, value in top_words:
+		dict[key] = float(value)
+
+	'''
 	for word in words:
 		if word != '':
 			if word not in dict:
 				dict[word] = 1.0
 			else:
 				dict[word] += 1.0
+	'''
 
 # create a dictionary of word n grams
 def get_pos(song, grams, n):
