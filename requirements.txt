@@ -1,4 +1,3 @@
-anaconda 
 flask
 jinja2
 matplotlib
