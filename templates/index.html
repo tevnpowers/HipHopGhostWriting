@@ -17,16 +17,19 @@
 		});
 
 		$('#get_features').click(function() {
-			$("#progress").text('Extracting features from Jay-Z and Will Smith lyrics...');
+			artist1 = $('#artist1 option:selected').text();
+			artist2 = $('#artist2 option:selected').text();
+			$("#features").text('');
+			$("#progress").text('Extracting features from ' + artist1 + ' and ' + artist2 + ' lyrics...this may take a moment...');
 			$("#loading_img").attr('class', 'visible');
 			$.getJSON('/extract_features', {
-				artist1: 'Jay_Z',
-				artist2: 'Will_Smith'
+				artist1: artist1,
+				artist2: artist2,
 			}, function(data1) {
-				$("#progress").text('Finding most discriminatory features between Jay-Z and Will Smith songs...');
+				$("#progress").text('Finding most discriminatory features between ' + artist1 + ' and ' + artist2 + ' songs...');
 				$.getJSON('/discriminatory_features', {
 				}, function(data2) {
-					$("#progress").text('Determining confidence in distinguishing between Jay-Z and Will Smith songs...');
+					$("#progress").text('Determining confidence in distinguishing between ' + artist1 + ' and ' + artist2 + ' songs...');
 					$.getJSON('/algorithm_confidence', {
 					}, function(data3) {
 						$("#progress").text('Results!');
@@ -54,20 +57,11 @@
   <body>
     <div class="container">
       <div class="header">
-        <h3 class="text-muted">How To Manage JSON Requests</h3>
+        <h1 class="text-muted">Hip Hop Lyric Comparisons</h1>
       </div>
-      <hr/>
-      <div>
-      <p>
-    <input type="text" size="5" name="a"> +
-    <input type="text" size="5" name="b"> =
-    <span id="result">?</span>
-    <p><a href="javascript:void();" id="calculate">calculate server side</a>
-      </form>
-      </div>
-    </div>		
+    </div>
 	<div class="container">
-		<h1 class="text-muted">What's the difference between
+		<h2 class="text-muted">What's the difference between
 			<select id='artist1'>
 				{% for artist in artists %}
 					<option value={{artist}}>{{artist}}</option>
@@ -80,7 +74,7 @@
 				{% endfor %}
 			</select>
 			?
-		</h1>
+		</h2>
 		<button id="get_features" type="button">Tell Me!</button>
 		<p><img class="hidden" id='loading_img' src="/static/ajax-loader.gif" alt="Loading bar...">
 		<p><span id="progress"></span>

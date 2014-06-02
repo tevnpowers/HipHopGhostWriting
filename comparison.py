@@ -42,9 +42,9 @@ def extract_features():
 	artist1 = request.args.get('artist1', 0, type=str)
 	artist2 = request.args.get('artist2', 0, type=str)
 
-	class1_song_names, class1_songs = get_all_songs(artist1)
+	class1_song_names, class1_songs = get_all_songs("Lyrics/" + artist1)
 
-	class2_song_names, class2_songs = get_all_songs(artist2)
+	class2_song_names, class2_songs = get_all_songs("Lyrics/" + artist2)
 
 	feature_names = ['Line Count', 'Average Word Length', 'Average Line Length', 'Word Density', 'POS Density', 'Character 4-Gram Density']
 	word_vocab = []
@@ -187,7 +187,9 @@ def add_numbers():
 # value of the operation
 @app.route('/')
 def index():
-	artists = ['Jay_Z', 'Will_Smith']
+	artists = []
+	for directory_name in os.listdir("./Lyrics"):
+		artists.append(directory_name)
 	return render_template('index.html', artists=artists)
 
 if __name__ == '__main__':
